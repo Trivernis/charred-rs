@@ -108,22 +108,27 @@ impl CharTapeMachine {
         }
     }
 
+    /// Checks if the machine has reached the eof
+    pub fn check_eof(&self) -> bool {
+        self.index >= self.text.len()
+    }
+
     /// checks if the current char is escaped
     #[inline]
-    pub fn check_escaped(&mut self) -> bool {
+    pub fn check_escaped(&self) -> bool {
         self.previous_char == ESCAPE
     }
 
     /// Returns true if the given character is equal to the current one
     /// and the current character is not escaped
     #[inline]
-    pub fn check_char(&mut self, value: &char) -> bool {
+    pub fn check_char(&self, value: &char) -> bool {
         self.current_char == *value && !self.check_escaped()
     }
 
     /// Checks if one of the given chars matches the current one
     #[inline]
-    pub fn check_any(&mut self, chars: &[char]) -> bool {
+    pub fn check_any(&self, chars: &[char]) -> bool {
         !self.check_escaped() && chars.contains(&self.current_char)
     }
 

@@ -68,4 +68,13 @@ mod tests {
             Ok(())
         }
     }
+
+    #[test]
+    fn it_checks_eof() -> TapeResult<()> {
+        let mut ctm = CharTapeMachine::new(TEST_STRING.chars().collect());
+        let _ = ctm.get_string_until_any(&['n'], &[]);
+        assert!(ctm.check_eof());
+
+        Ok(())
+    }
 }
