@@ -173,7 +173,7 @@ impl CharTapeMachine {
     /// returns an error on the current position and optionally rewinds
     /// if a rewind index is given
     #[inline]
-    fn assert_error(&mut self, rewind_index: Option<usize>) -> TapeError {
+    pub fn assert_error(&mut self, rewind_index: Option<usize>) -> TapeError {
         if let Some(index) = rewind_index {
             self.rewind_with_error(index)
         } else {
