@@ -48,6 +48,10 @@ impl CharTapeMachine {
         }
     }
 
+    pub fn get_text(&self) -> Vec<char> {
+        self.text.clone()
+    }
+
     /// Returns the next char
     /// if there is any
     pub fn next_char(&mut self) -> Option<char> {
