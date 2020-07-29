@@ -58,6 +58,12 @@ impl CharTapeMachine {
         self.index
     }
 
+    /// returns the current char
+    #[inline]
+    pub fn get_current(&self) -> char {
+        self.current_char
+    }
+
     /// Creates an error at the current position
     #[inline]
     pub fn err(&self) -> TapeError {
