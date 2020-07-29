@@ -52,6 +52,10 @@ impl CharTapeMachine {
         self.text.clone()
     }
 
+    pub fn get_index(&self) -> usize {
+        self.index
+    }
+
     /// Returns the next char
     /// if there is any
     pub fn next_char(&mut self) -> Option<char> {
