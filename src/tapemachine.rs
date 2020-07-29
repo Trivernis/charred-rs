@@ -48,12 +48,20 @@ impl CharTapeMachine {
         }
     }
 
+    #[inline]
     pub fn get_text(&self) -> Vec<char> {
         self.text.clone()
     }
 
+    #[inline]
     pub fn get_index(&self) -> usize {
         self.index
+    }
+
+    /// Creates an error at the current position
+    #[inline]
+    pub fn err(&self) -> TapeError {
+        TapeError::new(self.index)
     }
 
     /// Returns the next char
