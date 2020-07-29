@@ -245,7 +245,7 @@ impl CharTapeMachine {
 
     /// Returns the string until it encounters a given sequence or rewinds with error
     /// if it encounters an err sequence
-    fn get_string_until_sequence(
+    pub fn get_string_until_sequence(
         &mut self,
         until: &[&[char]],
         err_at: &[&[char]],
