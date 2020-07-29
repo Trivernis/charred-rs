@@ -3,14 +3,12 @@ use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug)]
 pub struct TapeError {
-    index: usize
+    index: usize,
 }
 
 impl TapeError {
     pub fn new(index: usize) -> Self {
-        Self {
-            index
-        }
+        Self { index }
     }
 }
 
@@ -129,7 +127,7 @@ impl CharTapeMachine {
         if self.current_char.is_whitespace() {
             while let Some(next) = self.next_char() {
                 if !next.is_whitespace() || self.check_escaped() {
-                    break
+                    break;
                 }
             }
         }
@@ -231,7 +229,11 @@ impl CharTapeMachine {
 
     /// returns an error if the next chars don't match a special sequence
     #[inline]
-    pub fn assert_sequence(&mut self, sequence: &[char], rewind_index: Option<usize>) -> TapeResult<()> {
+    pub fn assert_sequence(
+        &mut self,
+        sequence: &[char],
+        rewind_index: Option<usize>,
+    ) -> TapeResult<()> {
         if self.check_sequence(sequence) {
             Ok(())
         } else {
@@ -240,7 +242,11 @@ impl CharTapeMachine {
     }
 
     /// returns an error if the next chars don't match any given sequence
-    pub fn assert_any_sequence(&mut self, sequences: &[&[char]], rewind_index: Option<usize>) -> TapeResult<()> {
+    pub fn assert_any_sequence(
+        &mut self,
+        sequences: &[&[char]],
+        rewind_index: Option<usize>,
+    ) -> TapeResult<()> {
         if self.check_any_sequence(sequences) {
             Ok(())
         } else {
@@ -250,33 +256,11 @@ impl CharTapeMachine {
 
     /// returns the string until any given character is matched is matched.
     /// rewinds with error if it encounters a character form the error group
-    pub fn get_string_until_any(
-        &mut self,
-        until: &[char],
-        err_at: &[char],
-    ) -> TapeResult<String> {
+    #[inline]
+    pub fn get_string_until_any(&mut self, until: &[char], err_at: &[char]) -> TapeResult<String> {
         let start_index = self.index;
-        let mut result = String::new();
 
-        if self.check_any(until) {
-            return Ok(result);
-        } else if self.check_any(err_at) {
-            return Err(TapeError::new(self.index));
-        }
-
-        result.push(self.current_char);
-        while let Some(ch) = self.next_char() {
-            if self.check_any(until) || self.check_any(err_at) {
-                break;
-            }
-            result.push(ch);
-        }
-
-        if self.check_any(err_at) {
-            Err(self.rewind_with_error(start_index))
-        } else {
-            Ok(result)
-        }
+        self.get_string_until_any_or_rewind(until, err_at, start_index)
     }
 
     /// Returns the string until it encounters a given sequence or rewinds with error
@@ -305,6 +289,37 @@ impl CharTapeMachine {
 
         if self.check_any_sequence(err_at) {
             Err(self.rewind_with_error(start_index))
+        } else {
+            Ok(result)
+        }
+    }
+
+    /// returns the string until a special char is found
+    /// or rewinds if an err_at char is found
+    pub fn get_string_until_any_or_rewind(
+        &mut self,
+        until: &[char],
+        err_at: &[char],
+        rewind_index: usize,
+    ) -> TapeResult<String> {
+        let mut result = String::new();
+
+        if self.check_any(until) {
+            return Ok(result);
+        } else if self.check_any(err_at) {
+            return Err(TapeError::new(self.index));
+        }
+
+        result.push(self.current_char);
+        while let Some(ch) = self.next_char() {
+            if self.check_any(until) || self.check_any(err_at) {
+                break;
+            }
+            result.push(ch);
+        }
+
+        if self.check_any(err_at) {
+            Err(self.rewind_with_error(rewind_index))
         } else {
             Ok(result)
         }
