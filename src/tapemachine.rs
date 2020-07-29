@@ -115,6 +115,15 @@ impl CharTapeMachine {
         }
     }
 
+    /// Seeks any character of the given group until none is encountered anymore
+    pub fn seek_any(&mut self, chars: &[char]) -> TapeResult<()> {
+        while self.check_any(chars) {
+            self.seek_one()?;
+        }
+
+        Ok(())
+    }
+
     /// Seeks until it encounters a non whitespace character
     pub fn seek_whitespace(&mut self) {
         if self.current_char.is_whitespace() {

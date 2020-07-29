@@ -1,6 +1,6 @@
 [package]
 name = "charred"
-version = "0.1.7"
+version = "0.2.0"
 authors = ["trivernis <trivernis@protonmail.com>"]
 edition = "2018"
 license-file = "LICENSE"
