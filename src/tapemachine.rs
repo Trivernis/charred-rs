@@ -91,8 +91,10 @@ impl CharTapeMachine {
     /// Rewinds to a given index
     #[inline]
     pub fn rewind(&mut self, index: usize) {
-        self.index = index;
-        self.current_char = *self.text.get(index).unwrap();
+        if self.text.len() > index {
+            self.index = index;
+            self.current_char = *self.text.get(index).unwrap();
+        }
     }
 
     /// Rewinds to a given index and returns an error
