@@ -1,9 +1,12 @@
+#![feature(test)]
+extern crate test;
 pub mod tapemachine;
 
 #[cfg(test)]
 mod tests {
-    use crate::tapemachine::{CharTapeMachine, TapeError};
     use crate::tapemachine::TapeResult;
+    use crate::tapemachine::{CharTapeMachine, TapeError};
+    use test::Bencher;
 
     const TEST_STRING: &str = "TEST STRING 1234 \\l \\n";
 
@@ -58,11 +61,13 @@ mod tests {
         ctm.seek_one().unwrap();
         ctm.assert_char(&'E', None)?;
         ctm.seek_one().unwrap();
-        ctm.assert_sequence(&['S', 'T', ' '], None)?;
+        ctm.assert_str_sequence("ST ", None)?;
         ctm.seek_one().unwrap();
         ctm.assert_any_sequence(&[&['C'], &['A'], &['A', 'B'], &['S', 'T', 'R']], None)?;
 
-        if let Ok(_) = ctm.assert_any_sequence(&[&['C'], &['A'], &['A', 'B'], &['S', 'T', 'R']], None) {
+        if let Ok(_) =
+            ctm.assert_any_sequence(&[&['C'], &['A'], &['A', 'B'], &['S', 'T', 'R']], None)
+        {
             Err(TapeError::new(0))
         } else {
             Ok(())
@@ -76,5 +81,25 @@ mod tests {
         assert!(ctm.check_eof());
 
         Ok(())
+    }
+
+    #[bench]
+    fn bench_assert_seek(b: &mut Bencher) {
+        let mut ctm = CharTapeMachine::new(TEST_STRING.chars().collect());
+        b.iter(|| {
+            ctm.check_char(&'T');
+            ctm.seek_one().unwrap();
+            ctm.check_char(&'E');
+            ctm.seek_one().unwrap();
+            ctm.check_char(&'F');
+            ctm.seek_one().unwrap();
+            ctm.check_any(&['A', 'B', 'C', 'D', 'E', '2']);
+            ctm.seek_one().unwrap();
+            ctm.seek_whitespace();
+            ctm.check_sequence(&['S', 'T', 'R', 'I', 'N', 'T']);
+            ctm.check_sequence(&['S', 'T', 'R', 'I', 'N', 'G']);
+            ctm.check_eof();
+            ctm.rewind(0);
+        })
     }
 }

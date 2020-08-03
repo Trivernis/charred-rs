@@ -185,11 +185,54 @@ impl CharTapeMachine {
         }
     }
 
+    // checks if the next characters mach a string sequence
+    pub fn check_str_sequence(&mut self, sequence: &str) -> bool {
+        let start_index = self.index;
+
+        if self.check_escaped() {
+            self.rewind(start_index);
+
+            false
+        } else {
+            let matches = sequence.chars().all(|sq_character| {
+                if self.current_char != sq_character {
+                    self.rewind(start_index);
+                    return false;
+                }
+                if self.next_char() == None {
+                    self.rewind(start_index);
+                    return false;
+                }
+                true
+            });
+            if !matches {
+                false
+            } else {
+                if self.index > 0 {
+                    self.rewind(self.index - 1);
+                }
+                true
+            }
+        }
+    }
+
     /// checks if the next characters match any given sequence
     #[inline]
     pub fn check_any_sequence(&mut self, sequences: &[&[char]]) -> bool {
         for seq in sequences {
             if self.check_sequence(*seq) {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    /// checks if the next characters match any given sequence of strings
+    #[inline]
+    pub fn check_any_str_sequence(&mut self, sequences: &[&str]) -> bool {
+        for str_seq in sequences {
+            if self.check_str_sequence(str_seq) {
                 return true;
             }
         }
@@ -243,6 +286,20 @@ impl CharTapeMachine {
         }
     }
 
+    /// returns an error if the next chars don't match a special sequence
+    #[inline]
+    pub fn assert_str_sequence(
+        &mut self,
+        sequence: &str,
+        rewind_index: Option<usize>,
+    ) -> TapeResult<()> {
+        if self.check_str_sequence(sequence) {
+            Ok(())
+        } else {
+            Err(self.assert_error(rewind_index))
+        }
+    }
+
     /// returns an error if the next chars don't match any given sequence
     pub fn assert_any_sequence(
         &mut self,
@@ -250,6 +307,19 @@ impl CharTapeMachine {
         rewind_index: Option<usize>,
     ) -> TapeResult<()> {
         if self.check_any_sequence(sequences) {
+            Ok(())
+        } else {
+            Err(self.assert_error(rewind_index))
+        }
+    }
+
+    /// returns an error if the next chars don't match any given sequence
+    pub fn assert_any_str_sequence(
+        &mut self,
+        sequences: &[&str],
+        rewind_index: Option<usize>,
+    ) -> TapeResult<()> {
+        if self.check_any_str_sequence(sequences) {
             Ok(())
         } else {
             Err(self.assert_error(rewind_index))
