@@ -94,6 +94,9 @@ impl CharTapeMachine {
         if self.text.len() > index {
             self.index = index;
             self.current_char = *self.text.get(index).unwrap();
+            if self.index > 0 {
+                self.previous_char = *self.text.get(index - 1).unwrap();
+            }
         }
     }
 
@@ -379,7 +382,7 @@ impl CharTapeMachine {
         if self.check_any(until) {
             return Ok(result);
         } else if self.check_any(err_at) {
-            return Err(TapeError::new(self.index));
+            return Err(self.rewind_with_error(rewind_index));
         }
 
         result.push(self.current_char);
