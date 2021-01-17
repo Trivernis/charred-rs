@@ -145,20 +145,30 @@ impl CharTapeMachine {
 
     /// checks if the current char is escaped
     #[inline]
-    pub fn check_escaped(&self) -> bool {
-        self.previous_char == ESCAPE
+    pub fn check_escaped(&mut self) -> bool {
+        let start = self.index;
+
+        let escaped = if self.previous_char == ESCAPE {
+            self.rewind(start - 1);
+            !self.check_escaped()
+        } else {
+            false
+        };
+        self.rewind(start);
+
+        escaped
     }
 
     /// Returns true if the given character is equal to the current one
     /// and the current character is not escaped
     #[inline]
-    pub fn check_char(&self, value: &char) -> bool {
+    pub fn check_char(&mut self, value: &char) -> bool {
         self.current_char == *value && !self.check_escaped()
     }
 
     /// Checks if one of the given chars matches the current one
     #[inline]
-    pub fn check_any(&self, chars: &[char]) -> bool {
+    pub fn check_any(&mut self, chars: &[char]) -> bool {
         !self.check_escaped() && chars.contains(&self.current_char)
     }
 
