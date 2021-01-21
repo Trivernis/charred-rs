@@ -118,6 +118,13 @@ impl CharTapeMachine {
         }
     }
 
+    /// Seeks one character and returns
+    /// if it seeked or an error occurred
+    #[inline]
+    pub fn try_seek(&mut self) -> bool {
+        self.seek_one().is_ok()
+    }
+
     /// Seeks any character of the given group until none is encountered anymore
     pub fn seek_any(&mut self, chars: &[char]) -> TapeResult<()> {
         while self.check_any(chars) {
