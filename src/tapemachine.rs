@@ -10,6 +10,11 @@ impl TapeError {
     pub fn new(index: usize) -> Self {
         Self { index }
     }
+
+    /// Returns the index the error occured on
+    pub fn get_index(&self) -> usize {
+        self.index
+    }
 }
 
 impl Display for TapeError {
