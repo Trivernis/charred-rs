@@ -52,9 +52,9 @@ async fn parse_string_token(reader: &mut InputReader) -> TapeResult<Option<Token
 #[tokio::test]
 async fn it_scans() {
     let checkers: Vec<TokenCheckerFn> = vec![
-        Arc::new(|reader| Box::pin(parse_number_token(reader))),
-        Arc::new(|reader| Box::pin(parse_whitespace_token(reader))),
-        Arc::new(|reader| Box::pin(parse_string_token(reader))),
+        Arc::new(|reader, _| Box::pin(parse_number_token(reader))),
+        Arc::new(|reader, _| Box::pin(parse_whitespace_token(reader))),
+        Arc::new(|reader, _| Box::pin(parse_string_token(reader))),
     ];
     let input_reader = InputReader::new(Cursor::new("The Alphabet 12 ok"));
     let mut lexer = Lexer::new(input_reader, checkers);
@@ -75,8 +75,8 @@ async fn it_scans() {
 #[tokio::test]
 async fn it_falls_back_to_unknown() {
     let checkers: Vec<TokenCheckerFn> = vec![
-        Arc::new(|reader| Box::pin(parse_number_token(reader))),
-        Arc::new(|reader| Box::pin(parse_string_token(reader))),
+        Arc::new(|reader, _| Box::pin(parse_number_token(reader))),
+        Arc::new(|reader, _| Box::pin(parse_string_token(reader))),
     ];
     let input_reader = InputReader::new(Cursor::new("The Alphabet 12 ok"));
     let mut lexer = Lexer::new(input_reader, checkers);
