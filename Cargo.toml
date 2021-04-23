@@ -14,7 +14,6 @@ repository = "https://github.com/Trivernis/charred-rs"
 [dependencies]
 thiserror = "1.0.24"
 log = "0.4.14"
-async-trait = "0.1.50"
 
 [dependencies.tokio]
 version = "1.5.0"

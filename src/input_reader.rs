@@ -78,4 +78,9 @@ impl InputReader {
 
         Ok(())
     }
+
+    /// Returns the current index
+    pub fn index(&self) -> usize {
+        self.index
+    }
 }

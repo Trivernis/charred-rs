@@ -1,13 +1,17 @@
 use crate::error::TapeResult;
 use crate::input_reader::InputReader;
-use async_trait::async_trait;
 use std::any::{Any, TypeId};
+use std::future::Future;
+use std::pin::Pin;
+use std::sync::Arc;
 
-#[async_trait]
-pub trait ProtoToken {
-    /// Tries parsing the token
-    async fn try_parse(reader: &mut InputReader) -> TapeResult<Option<Token>>;
-}
+pub type TokenCheckerFn = Arc<
+    dyn for<'a> Fn(
+            &'a mut InputReader,
+        ) -> Pin<Box<dyn Future<Output = TapeResult<Option<Token>>> + Send + 'a>>
+        + Send
+        + Sync,
+>;
 
 pub struct Token {
     inner: Box<dyn Any>,
@@ -38,3 +42,6 @@ impl Token {
         self.inner.as_ref().type_id() == TypeId::of::<T>()
     }
 }
+
+/// Parsed when no other matching token was found for the character
+pub struct UnknownToken(pub char);
