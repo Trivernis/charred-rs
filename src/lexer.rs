@@ -22,7 +22,7 @@ impl Lexer {
             let mut found = false;
 
             for checker_fn in &self.checkers {
-                if let Some(token) = checker_fn.as_ref()(&mut self.reader, tokens.last()).await? {
+                if let Some(token) = checker_fn.as_ref()(&mut self.reader).await? {
                     tokens.push(token);
                     found = true;
                     break;

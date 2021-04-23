@@ -8,7 +8,6 @@ use std::sync::Arc;
 pub type TokenCheckerFn = Arc<
     dyn for<'a> Fn(
             &'a mut InputReader,
-            Option<&'a Token>, // last token
         ) -> Pin<Box<dyn Future<Output = TapeResult<Option<Token>>> + Send + 'a>>
         + Send
         + Sync,
