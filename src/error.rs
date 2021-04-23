@@ -6,4 +6,7 @@ pub type TapeResult<T> = Result<T, TapeError>;
 pub enum TapeError {
     #[error("IO Error: {0}")]
     TokioIoError(#[from] tokio::io::Error),
+
+    #[error("Unexpected EOF")]
+    EOF,
 }

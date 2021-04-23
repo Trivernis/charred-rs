@@ -17,8 +17,8 @@ log = "0.4.14"
 
 [dependencies.tokio]
 version = "1.5.0"
-features = ["io-util", "io-std"]
+features = ["io-util", "io-std", "fs"]
 
 [dev-dependencies.tokio]
 version = "1.5.0"
-features = ["rt-multi-thread", "test-util"]
+features = ["rt-multi-thread", "macros"]
