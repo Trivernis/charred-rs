@@ -58,8 +58,10 @@ async fn it_scans() {
     ];
     let input_reader = InputReader::new(Cursor::new("The Alphabet 12 ok"));
     let mut lexer = Lexer::new(input_reader, checkers);
+
     let tokens = lexer.scan().await.unwrap();
     assert!(!tokens.is_empty());
+
     let mut tokens = tokens.into_iter();
     assert!(tokens.next().unwrap().is::<StringToken>());
     assert!(tokens.next().unwrap().is::<WhiteSpaceToken>());
