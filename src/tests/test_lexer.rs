@@ -1,15 +1,7 @@
-# Charred
-
-This crate provides a generic asynchronous lexer that operates on files with tokio.
-Tokens are parsed with provided async closures.
-
-## Usage
-
-```rust
 use crate::error::TapeResult;
 use crate::input_reader::InputReader;
 use crate::lexer::Lexer;
-use crate::token::{Token, TokenCheckerFn};
+use crate::token::{Token, TokenCheckerFn, UnknownToken};
 use std::io::Cursor;
 use std::sync::Arc;
 
@@ -57,30 +49,45 @@ async fn parse_string_token(reader: &mut InputReader) -> TapeResult<Option<Token
     }
 }
 
-#[tokio::main]
-async fn main() {
-    // functions that try to parse the token into an object
+#[tokio::test]
+async fn it_scans() {
     let checkers: Vec<TokenCheckerFn> = vec![
         Arc::new(|reader| Box::pin(parse_number_token(reader))),
         Arc::new(|reader| Box::pin(parse_whitespace_token(reader))),
         Arc::new(|reader| Box::pin(parse_string_token(reader))),
     ];
-    // input reader encapsulates (almost) any type that implements AsyncBufRead
-    let input_reader = InputReader::new(Cursor::new("Word 12"));
+    let input_reader = InputReader::new(Cursor::new("The Alphabet 12 ok"));
     let mut lexer = Lexer::new(input_reader, checkers);
 
-    // scan starts scanning the provided input
     let tokens = lexer.scan().await.unwrap();
     assert!(!tokens.is_empty());
 
     let mut tokens = tokens.into_iter();
-    // use the is, try_as and try_into methods on the token type to get the underlying value
+    assert!(tokens.next().unwrap().is::<StringToken>());
+    assert!(tokens.next().unwrap().is::<WhiteSpaceToken>());
     assert!(tokens.next().unwrap().is::<StringToken>());
     assert!(tokens.next().unwrap().is::<WhiteSpaceToken>());
     assert!(tokens.next().unwrap().is::<NumberToken>());
+    assert!(tokens.next().unwrap().is::<WhiteSpaceToken>());
+    assert!(tokens.next().unwrap().is::<StringToken>());
 }
-```
 
-## License
-
-Apache-2.0
+#[tokio::test]
+async fn it_falls_back_to_unknown() {
+    let checkers: Vec<TokenCheckerFn> = vec![
+        Arc::new(|reader| Box::pin(parse_number_token(reader))),
+        Arc::new(|reader| Box::pin(parse_string_token(reader))),
+    ];
+    let input_reader = InputReader::new(Cursor::new("The Alphabet 12 ok"));
+    let mut lexer = Lexer::new(input_reader, checkers);
+    let tokens = lexer.scan().await.unwrap();
+    assert!(!tokens.is_empty());
+    let mut tokens = tokens.into_iter();
+    assert!(tokens.next().unwrap().is::<StringToken>());
+    assert!(tokens.next().unwrap().is::<UnknownToken>());
+    assert!(tokens.next().unwrap().is::<StringToken>());
+    assert!(tokens.next().unwrap().is::<UnknownToken>());
+    assert!(tokens.next().unwrap().is::<NumberToken>());
+    assert!(tokens.next().unwrap().is::<UnknownToken>());
+    assert!(tokens.next().unwrap().is::<StringToken>());
+}
