@@ -9,4 +9,7 @@ pub enum TapeError {
 
     #[error("Unexpected EOF")]
     EOF,
+
+    #[error("Failed to read char at current index")]
+    IndexError,
 }

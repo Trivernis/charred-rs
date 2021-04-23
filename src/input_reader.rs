@@ -11,6 +11,7 @@ pub struct InputReader {
 }
 
 impl InputReader {
+    /// Creates a new Input Reader
     pub fn new<T: AsyncBufRead + Unpin + Send + 'static>(inner: T) -> Self {
         Self {
             inner: Box::new(inner),
@@ -22,13 +23,16 @@ impl InputReader {
     /// Reads the next char consuming it in the process
     #[inline]
     pub async fn consume(&mut self) -> TapeResult<char> {
-        self.read_next().await
+        self.seek_to(self.index + 1).await?;
+
+        self.read_current().await
     }
 
     /// Returns the next char without forwarding
     #[inline]
     pub async fn peek(&mut self) -> TapeResult<char> {
-        let char = self.read_next().await?;
+        self.seek_to(self.index + 1).await?;
+        let char = self.read_current().await?;
         self.seek_to(self.index - 1).await?;
 
         Ok(char)
@@ -44,18 +48,10 @@ impl InputReader {
         }
     }
 
-    /// Reads the next char returning \x00 for EOF
-    async fn read_next(&mut self) -> TapeResult<char> {
-        self.seek_to(self.index + 1).await?;
-        let result = self
-            .buf
-            .get(self.index - 1..self.index)
-            .ok_or(TapeError::EOF)?
-            .chars()
-            .next()
-            .ok_or(TapeError::EOF);
-
-        result
+    /// Returns the previous char
+    #[inline]
+    pub async fn previous(&mut self) -> Option<char> {
+        self.read_current().await.ok()
     }
 
     /// Seeks to a given index
@@ -82,5 +78,21 @@ impl InputReader {
     /// Returns the current index
     pub fn index(&self) -> usize {
         self.index
+    }
+
+    /// Reads the next char returning \x00 for EOF
+    async fn read_current(&mut self) -> TapeResult<char> {
+        if self.index == 0 {
+            return Err(TapeError::IndexError);
+        }
+        let result = self
+            .buf
+            .get(self.index - 1..self.index)
+            .ok_or(TapeError::EOF)?
+            .chars()
+            .next()
+            .ok_or(TapeError::EOF);
+
+        result
     }
 }

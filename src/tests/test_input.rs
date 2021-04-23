@@ -16,6 +16,17 @@ async fn it_peeks() {
 }
 
 #[tokio::test]
+async fn it_reads_the_previous() {
+    let mut reader = get_reader();
+    assert!(reader.previous().await.is_none());
+    reader.consume().await.unwrap();
+    assert_eq!(reader.previous().await.unwrap(), 'A');
+    assert_eq!(reader.previous().await.unwrap(), 'A');
+    reader.consume().await.unwrap();
+    assert_eq!(reader.previous().await.unwrap(), 'B');
+}
+
+#[tokio::test]
 async fn it_consumes() {
     let mut reader = get_reader();
     assert_eq!(reader.consume().await.unwrap(), 'A');
