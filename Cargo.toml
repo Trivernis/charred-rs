@@ -1,6 +1,6 @@
 [package]
 name = "charred"
-version = "0.3.6"
+version = "2.0.0"
 authors = ["trivernis <trivernis@protonmail.com>"]
 edition = "2018"
 license-file = "LICENSE"
@@ -12,3 +12,13 @@ repository = "https://github.com/Trivernis/charred-rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+thiserror = "1.0.24"
+log = "0.4.14"
+
+[dependencies.tokio]
+version = "1.5.0"
+features = ["io-util", "io-std"]
+
+[dev-dependencies.tokio]
+version = "1.5.0"
+features = ["rt-multi-thread", "test-util"]
