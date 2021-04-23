@@ -5,13 +5,13 @@ use tokio::io::{AsyncBufRead, AsyncBufReadExt};
 /// An Input reader to asynchronously read a type
 /// that implements AsyncBufRead and AsyncSeek.
 pub struct InputReader {
-    inner: Box<dyn AsyncBufRead + Unpin>,
+    inner: Box<dyn AsyncBufRead + Unpin + Send>,
     buf: String,
     index: usize,
 }
 
 impl InputReader {
-    pub fn new<T: AsyncBufRead + Unpin + 'static>(inner: T) -> Self {
+    pub fn new<T: AsyncBufRead + Unpin + Send + 'static>(inner: T) -> Self {
         Self {
             inner: Box::new(inner),
             buf: String::new(),
@@ -37,7 +37,7 @@ impl InputReader {
     /// Returns if EOF has been reached
     #[inline]
     pub async fn check_eof(&mut self) -> bool {
-        if let Err(TapeError::EOF) = self.read_next().await {
+        if let Err(TapeError::EOF) = self.peek().await {
             true
         } else {
             false
