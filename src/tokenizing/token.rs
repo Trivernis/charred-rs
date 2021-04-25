@@ -39,7 +39,12 @@ impl Token {
 
     /// Checks if the inner value is of a given concrete type
     pub fn is<T: 'static>(&self) -> bool {
-        self.inner.as_ref().type_id() == TypeId::of::<T>()
+        self.inner_type_id() == TypeId::of::<T>()
+    }
+
+    /// Returns the TypeID of the inner stored type
+    pub fn inner_type_id(&self) -> TypeId {
+        self.inner.as_ref().type_id()
     }
 }
 

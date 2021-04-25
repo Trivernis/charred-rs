@@ -1,3 +1,4 @@
+#[macro_use]
 pub mod matching;
 pub mod tokenizing;
 mod utils;
