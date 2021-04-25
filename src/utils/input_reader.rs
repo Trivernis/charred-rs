@@ -1,4 +1,4 @@
-use crate::error::{TapeError, TapeResult};
+use crate::{TapeError, TapeResult};
 use std::io::ErrorKind;
 use tokio::io::{AsyncBufRead, AsyncBufReadExt};
 

@@ -1,5 +1,5 @@
-use crate::error::TapeResult;
-use crate::input_reader::InputReader;
+use crate::InputReader;
+use crate::TapeResult;
 use std::any::{Any, TypeId};
 use std::future::Future;
 use std::pin::Pin;

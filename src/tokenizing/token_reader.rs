@@ -1,4 +1,4 @@
-use crate::token::{EOFToken, Token};
+use crate::tokenizing::{EOFToken, Token};
 
 pub struct TokenReader {
     tokens: Vec<Token>,

@@ -1,5 +1,5 @@
-use crate::token::{EOFToken, Token};
-use crate::token_reader::TokenReader;
+use crate::tokenizing::TokenReader;
+use crate::tokenizing::{EOFToken, Token};
 
 struct AToken;
 struct BToken;

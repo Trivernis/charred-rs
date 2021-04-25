@@ -1,7 +1,7 @@
-use crate::error::TapeResult;
-use crate::input_reader::InputReader;
-use crate::lexer::Lexer;
-use crate::token::{Token, TokenCheckerFn, UnknownToken};
+use crate::tokenizing::Lexer;
+use crate::tokenizing::{Token, TokenCheckerFn, UnknownToken};
+use crate::InputReader;
+use crate::TapeResult;
 use std::io::Cursor;
 use std::sync::Arc;
 

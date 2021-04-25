@@ -1,5 +1,5 @@
-use crate::error::{TapeError, TapeResult};
-use crate::input_reader::InputReader;
+use crate::InputReader;
+use crate::{TapeError, TapeResult};
 use std::io::Cursor;
 
 fn get_reader() -> InputReader {

@@ -1,8 +1,9 @@
-pub mod error;
-pub mod input_reader;
-pub mod lexer;
-pub mod token;
-pub mod token_reader;
+pub mod matching;
+pub mod tokenizing;
+mod utils;
+
+pub use utils::error::*;
+pub use utils::input_reader::InputReader;
 
 #[cfg(test)]
 mod tests;

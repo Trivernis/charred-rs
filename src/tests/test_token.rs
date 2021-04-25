@@ -1,6 +1,6 @@
-use crate::error::TapeResult;
-use crate::input_reader::InputReader;
-use crate::token::Token;
+use crate::tokenizing::Token;
+use crate::InputReader;
+use crate::TapeResult;
 use std::io::Cursor;
 
 #[derive(Debug)]

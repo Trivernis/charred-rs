@@ -1,6 +1,6 @@
-use crate::error::TapeResult;
-use crate::input_reader::InputReader;
-use crate::token::{EOFToken, Token, TokenCheckerFn, UnknownToken};
+use crate::tokenizing::{EOFToken, Token, TokenCheckerFn, UnknownToken};
+use crate::InputReader;
+use crate::TapeResult;
 
 pub struct Lexer {
     reader: InputReader,
@@ -13,7 +13,7 @@ impl Lexer {
         Self { reader, checkers }
     }
 
-    /// Scans for tokens
+    /// Scans for tokenizing
     pub async fn scan(&mut self) -> TapeResult<Vec<Token>> {
         let mut tokens = Vec::new();
 
